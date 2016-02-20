@@ -24,7 +24,7 @@ typedef struct
 //declare functions and pointer to use later
 int search(FILE* inptr);
 void read_write (int location_start, FILE* inptr);
-int *JPEGs_found;
+int JPEGs_found;
 
 int main(int argc, char* argv[])
 {    
@@ -41,7 +41,7 @@ int main(int argc, char* argv[])
     // search for placement of first jpeg block
     int location_start = search(inptr); 
     
-    if (*JPEGs_found == 1)
+    if (JPEGs_found == 1)
     {
         printf("No JPEGs found.");   
         return 1;   
@@ -56,9 +56,6 @@ int main(int argc, char* argv[])
       
     //close input file
     fclose(inptr);
-    
-    free(JPEGs_found);
-
 };
 
 
@@ -72,25 +69,25 @@ int search(FILE* inptr)
     int location_search;
     
     // declare an int to check if no JPEGs in file
-    *JPEGs_found = 1;
+    JPEGs_found = 1;
     
     // iterate over each block of infile and break when JPEG magic numbers are found
     for (location_search = 0; fread(&block_search, sizeof(block), 1, inptr) == 1; location_search++)
     {                            
         if (block_search.ID_1 == 0xff && block_search.ID_2 == 0xd8 && block_search.ID_3 == 0xff && block_search.ID_4 == 0xe0)
         {
-            *JPEGs_found = 0;
+            JPEGs_found = 0;
             break;
         }     
         else if (block_search.ID_1 == 0xff && block_search.ID_2 == 0xd8 && block_search.ID_3 == 0xff && block_search.ID_4 == 0xe1)
         {
-            *JPEGs_found = 0;
+            JPEGs_found = 0;
             break;
         };
     };
     
     // if JPEGs_found switch is 0, return the location of block containing first JPEG magic numbers
-    if (*JPEGs_found == 0)
+    if (JPEGs_found == 0)
     {
         return location_search;
     }
